@@ -1,9 +1,10 @@
 const express = require('express');
-const router = express.Router(); // <-- YAHAN 'ROUTOR' KI JAGAH 'ROUTER' KAR DIYA GAYA HAI
+const router = express.Router();
 const Vacancy = require('../models/vacancyModel');
+// --- Galti yahan thi, is line ko jodna zaroori hai ---
 const { upload } = require('../config/cloudinaryConfig'); // Cloudinary upload config import
 
-// --- GET ALL VACANCIES (Updated for Search and Filter) ---
+// --- GET ALL VACANCIES ---
 router.get('/', async (req, res) => {
     try {
         const query = {};
@@ -19,7 +20,6 @@ router.get('/', async (req, res) => {
         if (req.query.category) {
             query.category = { $regex: req.query.category, $options: 'i' };
         }
-
         const vacancies = await Vacancy.find(query).sort({ createdAt: -1 });
         res.json(vacancies);
     } catch (error) {
@@ -31,9 +31,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const vacancy = await Vacancy.findById(req.params.id);
-        if (!vacancy) {
-            return res.status(404).json({ message: 'Vacancy not found' });
-        }
+        if (!vacancy) return res.status(404).json({ message: 'Vacancy not found' });
         res.json(vacancy);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching single vacancy' });
@@ -51,7 +49,7 @@ router.post('/', upload.single('image'), async (req, res) => {
             requirements: req.body.requirements,
             salary: req.body.salary,
             contactNumber: req.body.contactNumber,
-            imageUrl: req.file ? req.file.path : null, // Save Cloudinary URL
+            imageUrl: req.file ? req.file.path : null,
         });
         const savedVacancy = await newVacancy.save();
         res.status(201).json(savedVacancy);
@@ -68,9 +66,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             updateData.imageUrl = req.file.path;
         }
         const updatedVacancy = await Vacancy.findByIdAndUpdate(req.params.id, updateData, { new: true });
-        if (!updatedVacancy) {
-            return res.status(404).json({ message: 'Vacancy not found' });
-        }
+        if (!updatedVacancy) return res.status(404).json({ message: 'Vacancy not found' });
         res.json(updatedVacancy);
     } catch (error) {
         res.status(400).json({ message: 'Error updating vacancy', error: error.message });
@@ -81,9 +77,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const deletedVacancy = await Vacancy.findByIdAndDelete(req.params.id);
-        if (!deletedVacancy) {
-            return res.status(404).json({ message: 'Vacancy not found' });
-        }
+        if (!deletedVacancy) return res.status(404).json({ message: 'Vacancy not found' });
         res.json({ message: 'Vacancy deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting vacancy' });
