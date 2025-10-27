@@ -1,26 +1,25 @@
-// routes/vacancyRoutes.js
+const express = require('express');
+const router = express.Router(); // <-- YAHAN 'ROUTOR' KI JAGAH 'ROUTER' KAR DIYA GAYA HAI
+const Vacancy = require('../models/vacancyModel');
+const { upload } = require('../config/cloudinaryConfig'); // Cloudinary upload config import
 
 // --- GET ALL VACANCIES (Updated for Search and Filter) ---
 router.get('/', async (req, res) => {
     try {
-        // Build the query object based on URL parameters
         const query = {};
         if (req.query.search) {
-            // Search in title, description, or country (case-insensitive)
             query.$or = [
                 { title: { $regex: req.query.search, $options: 'i' } },
                 { description: { $regex: req.query.search, $options: 'i' } },
-                // { country: { $regex: req.query.search, $options: 'i' } } // Optional: search by country too
             ];
         }
         if (req.query.country) {
-            query.country = { $regex: req.query.country, $options: 'i' }; // Case-insensitive filter
+            query.country = { $regex: req.query.country, $options: 'i' };
         }
         if (req.query.category) {
-            query.category = { $regex: req.query.category, $options: 'i' }; // Case-insensitive filter
+            query.category = { $regex: req.query.category, $options: 'i' };
         }
 
-        // Find vacancies matching the query, sorted by newest first
         const vacancies = await Vacancy.find(query).sort({ createdAt: -1 });
         res.json(vacancies);
     } catch (error) {
@@ -28,13 +27,67 @@ router.get('/', async (req, res) => {
     }
 });
 
-// --- CREATE A NEW VACANCY (No change here) ---
-// router.post('/', upload.single('image'), ... ); // Keep this part as it is
+// --- GET A SINGLE VACANCY BY ID ---
+router.get('/:id', async (req, res) => {
+    try {
+        const vacancy = await Vacancy.findById(req.params.id);
+        if (!vacancy) {
+            return res.status(404).json({ message: 'Vacancy not found' });
+        }
+        res.json(vacancy);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching single vacancy' });
+    }
+});
 
-// --- UPDATE A VACANCY (No change here) ---
-// router.put('/:id', ... ); // Keep this part as it is
+// --- CREATE A NEW VACANCY ---
+router.post('/', upload.single('image'), async (req, res) => {
+    try {
+        const newVacancy = new Vacancy({
+            title: req.body.title,
+            description: req.body.description,
+            country: req.body.country,
+            category: req.body.category,
+            requirements: req.body.requirements,
+            salary: req.body.salary,
+            contactNumber: req.body.contactNumber,
+            imageUrl: req.file ? req.file.path : null, // Save Cloudinary URL
+        });
+        const savedVacancy = await newVacancy.save();
+        res.status(201).json(savedVacancy);
+    } catch (error) {
+        res.status(400).json({ message: 'Error creating vacancy', error: error.message });
+    }
+});
 
-// --- DELETE A VACANCY (No change here) ---
-// router.delete('/:id', ... ); // Keep this part as it is
+// --- UPDATE A VACANCY ---
+router.put('/:id', upload.single('image'), async (req, res) => {
+    try {
+        const updateData = { ...req.body };
+        if (req.file) {
+            updateData.imageUrl = req.file.path;
+        }
+        const updatedVacancy = await Vacancy.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!updatedVacancy) {
+            return res.status(404).json({ message: 'Vacancy not found' });
+        }
+        res.json(updatedVacancy);
+    } catch (error) {
+        res.status(400).json({ message: 'Error updating vacancy', error: error.message });
+    }
+});
 
-// module.exports = router; // Keep this line at the end
+// --- DELETE A VACANCY ---
+router.delete('/:id', async (req, res) => {
+    try {
+        const deletedVacancy = await Vacancy.findByIdAndDelete(req.params.id);
+        if (!deletedVacancy) {
+            return res.status(404).json({ message: 'Vacancy not found' });
+        }
+        res.json({ message: 'Vacancy deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting vacancy' });
+    }
+});
+
+module.exports = router;
