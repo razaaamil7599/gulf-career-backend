@@ -14,8 +14,8 @@ const app = express();
 
 // --- CORS ko FINAL UPDATE KIYA GAYA HAI ---
 const corsOptions = {
-    // AB LIVE NETLIFY URL YAHAN JOD DIYA GAYA HAI
-    origin: ['http://localhost:3000', 'https://regal-yeot-39c413.netlify.app'],
+    // NAYA, FINAL DOMAIN YAHAN JOD DIYA GAYA HAI
+    origin: ['http://localhost:3000', 'https://gulfcareergateway.netlify.app'],
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 };
