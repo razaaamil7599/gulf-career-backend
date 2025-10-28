@@ -14,8 +14,12 @@ const app = express();
 
 // --- CORS ko FINAL UPDATE KIYA GAYA HAI ---
 const corsOptions = {
-    // NAYA, FINAL DOMAIN YAHAN JOD DIYA GAYA HAI
-    origin: ['http://localhost:3000', 'https://gulfcareergateway.netlify.app'],
+    // NAYA DOMAIN AUR RENDER URL JOD DIYA GAYA HAI TAKI UptimeRobot KAAM KARE
+    origin: [
+        'http://localhost:3000',
+        'https://gulfcareergateway.netlify.app',
+        'https://gulf-career-backend-1.onrender.com' // <-- UPTIMEROBOT IS PAR PING KAREGA
+    ],
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 };
