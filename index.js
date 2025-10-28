@@ -12,9 +12,10 @@ dotenv.config();
 
 const app = express();
 
-// CORS ko update karna
+// --- CORS ko FINAL UPDATE KIYA GAYA HAI ---
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://placeholder-for-your-site.netlify.app'],
+    // AB LIVE NETLIFY URL YAHAN JOD DIYA GAYA HAI
+    origin: ['http://localhost:3000', 'https://regal-yeot-39c413.netlify.app'],
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 };
