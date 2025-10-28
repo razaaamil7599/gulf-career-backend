@@ -1,8 +1,10 @@
-const express = require('express');// Test comment to force update
+const express = require('express');
 const router = express.Router();
 const Vacancy = require('../models/vacancyModel');
-// --- Galti yahan thi, is line ko jodna zaroori hai ---
-const { upload } = require('../config/cloudinaryConfig'); // Cloudinary upload config import
+
+// --- YAHAN BADLAAV KIYA GAYA HAI ---
+// File ka poora naam (.js ke saath) likha hai taaki server par koi confusion na ho
+const { upload } = require('../config/cloudinaryConfig.js');
 
 // --- GET ALL VACANCIES ---
 router.get('/', async (req, res) => {
