@@ -1,17 +1,19 @@
-// src/index.js (FINAL CORRECTED CODE for Backend Project)
+// Final restore attempt
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// Raste theek kiye gaye hain
+// File paths are now correct for the 'src' folder structure
 const vacancyRoutes = require('./routes/vacancyRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
 dotenv.config();
+
 const app = express();
 
+// CORS configuration to allow all your live sites
 const corsOptions = {
     origin: [
         'http://localhost:3000',
@@ -22,11 +24,14 @@ const corsOptions = {
     credentials: true
 };
 app.use(cors(corsOptions));
+
 app.use(express.json());
 
-// Rasta theek kiya gaya hai
+// --- THIS IS THE CORRECTED PATH ---
+// Cloudinary config is now inside the same 'src' directory level
 require('./config/cloudinaryConfig.js');
 
+// --- MongoDB Atlas Connection ---
 console.log("Connecting to MongoDB Atlas... Please wait.");
 
 mongoose.connect(process.env.MONGO_URI)
@@ -42,6 +47,7 @@ mongoose.connect(process.env.MONGO_URI)
         process.exit(1);
     });
 
+// API Routes
 app.use('/api/vacancies', vacancyRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/ai', aiRoutes);
