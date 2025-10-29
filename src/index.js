@@ -4,19 +4,20 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// File paths are correct for the 'src' folder structure
+// Yeh vacancyRoutes ka sahi path hai
 const vacancyRoutes = require('./routes/vacancyRoutes');
 
+// .env file se secret jaankari load karo
 dotenv.config();
 
 const app = express();
 
-// CORS configuration to allow all your live sites
+// CORS ko FINAL UPDATE KIYA GAYA HAI (Admin Panel ke URL ke saath)
 const corsOptions = {
     origin: [
         'http://localhost:3000',
         'https://gulfcareergateway.netlify.app',
-        'https://gulf-career-admin.netlify.app'
+        'https://gulf-career-admin.netlify.app' // Admin panel ka URL
     ],
     methods: "GET,POST,PUT,DELETE",
     credentials: true
@@ -25,11 +26,11 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-// --- THIS IS THE CORRECTED PATH ---
-// Cloudinary config is now in the same directory level
-require('./config/cloudinaryConfig.js');
+// --- YAHAN RASTA (PATH) THEEK KIYA GAYA HAI ---
+// Cloudinary config ko import karna
+require('./config/cloudinaryConfig.js'); // '../' ko './' se badla gaya
 
-// --- MongoDB Atlas Connection ---
+// --- MongoDB Atlas se Connect karna ---
 console.log("Connecting to MongoDB Atlas... Please wait.");
 
 mongoose.connect(process.env.MONGO_URI)
@@ -45,7 +46,7 @@ mongoose.connect(process.env.MONGO_URI)
         process.exit(1);
     });
 
-// API Routes
+// API Routes ko server se jodna
 const settingsRoutes = require('./routes/settingsRoutes');
 app.use('/api/vacancies', vacancyRoutes);
 app.use('/api/settings', settingsRoutes);
