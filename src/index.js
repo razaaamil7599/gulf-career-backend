@@ -12,9 +12,13 @@ dotenv.config();
 
 const app = express();
 
-// CORS ko update karna
+// CORS ko FINAL UPDATE KIYA GAYA HAI (Admin Panel ke URL ke saath)
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://placeholder-for-your-site.netlify.app'],
+    origin: [
+        'http://localhost:3000',
+        'https://gulfcareergateway.netlify.app',
+        'https://gulf-career-admin.netlify.app' // Admin panel ka URL
+    ],
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 };
@@ -23,24 +27,19 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Cloudinary config ko import karna
-require('./config/cloudinaryConfig.js');
+require('../config/cloudinaryConfig.js'); // Path theek kiya gaya
 
 // --- MongoDB Atlas se Connect karna ---
 console.log("Connecting to MongoDB Atlas... Please wait.");
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        // Agar connection safal hua
         console.log("✅ Successfully connected to MongoDB Atlas! Database is ready.");
-
-        // Server sirf tabhi chalu hoga jab database connect ho jaye
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
             console.log(`✅ Server is running successfully on port ${PORT}`);
         });
-
     }).catch(err => {
-        // Agar connection fail hua
         console.error("❌ CONNECTION FAILED! Please check your MONGO_URI in the .env file.");
         console.error("Error Details:", err.message);
         process.exit(1);
