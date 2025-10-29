@@ -26,8 +26,9 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+// --- YAHAN RASTA (PATH) THEEK KIYA GAYA HAI ---
 // Cloudinary config ko import karna
-require('../config/cloudinaryConfig.js'); // Path theek kiya gaya
+require('./config/cloudinaryConfig.js'); // '../' ko './' se badla gaya
 
 // --- MongoDB Atlas se Connect karna ---
 console.log("Connecting to MongoDB Atlas... Please wait.");
