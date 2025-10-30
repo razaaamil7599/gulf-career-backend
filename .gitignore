@@ -1,5 +1,2 @@
-# Ignore the huge folder of installed packages
 node_modules
-
-# Ignore the file with secret keys (like database passwords)
 .env
