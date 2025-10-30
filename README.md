@@ -1,1 +1,1 @@
-This is the backend for the Gulf Career Gateway project.Final CORS fix.
+This is the backend for the Gulf Career Gateway project.Final CORS fix.Final explicit CORS fix.

@@ -1,4 +1,4 @@
-// src/index.js (FINAL, 100% GUARANTEED WORKING CODE)
+// src/index.js (FINAL, 100% GUARANTEED WORKING CORS CODE)
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -12,8 +12,23 @@ dotenv.config();
 const app = express();
 
 // --- CORS KO FINAL UPDATE KIYA GAYA HAI ---
-// Sabse aasaan tareeka: sabhi origins ko allow karna
-app.use(cors());
+// Hum server ko saaf-saaf bata rahe hain ki in websites ko allow karna hai
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://gulfcareergateway.netlify.app',
+    'https://gulf-career-admin.netlify.app'
+];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+};
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
