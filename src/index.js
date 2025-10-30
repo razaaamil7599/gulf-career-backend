@@ -1,22 +1,20 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
-const aiRoutes = require('./routes/aiRoutes');
+import express from 'express';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import aiRoutes from './routes/aiRoutes.js';
+import vacancyRoutes from './routes/vacancyRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
+
+dotenv.config();
+connectDB();
 
 const app = express();
-
-// Middleware
-app.use(cors());
 app.use(express.json());
-
-// Connect Database
-connectDB();
 
 // Routes
 app.use('/api/ai', aiRoutes);
-
-app.get('/', (req, res) => res.send('🌍 Gulf Career Gateway Backend Running...'));
+app.use('/api/vacancies', vacancyRoutes);
+app.use('/api/settings', settingsRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

@@ -1,9 +1,8 @@
-const express = require('express');
-const fetch = require('node-fetch');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const router = express.Router();
+import express from 'express';
+import fetch from 'node-fetch';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const router = express.Router();
 
 async function urlToGenerativePart(url, mimeType) {
     const response = await fetch(url);
@@ -24,16 +23,16 @@ router.post('/extract-job-data', async (req, res) => {
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' });
 
-        const prompt = `From the provided job advertisement image, extract the following details in JSON:
-    {
-      "title": "Job Title",
-      "salary": "Salary",
-      "country": "Country",
-      "requirements": "Key Requirements",
-      "description": "Brief Description"
-    }`;
+        const prompt = `Extract job details from this image:
+    - Job Title
+    - Salary
+    - Country
+    - Key Requirements
+    - Description
+    Output valid JSON only.`;
 
         const imagePart = await urlToGenerativePart(imageUrl, 'image/jpeg');
         const result = await model.generateContent([prompt, imagePart]);
@@ -45,12 +44,9 @@ router.post('/extract-job-data', async (req, res) => {
 
         res.json(jsonData);
     } catch (error) {
-        console.error('AI Data Extraction Error:', error);
-        res.status(500).json({
-            error: 'Failed to extract data from image using AI.',
-            details: error.message,
-        });
+        console.error('AI Extraction Error:', error);
+        res.status(500).json({ error: 'Failed to extract job data using AI.' });
     }
 });
 
-module.exports = router;
+export default router;

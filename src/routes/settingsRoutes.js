@@ -1,6 +1,8 @@
-const express = require('express');
+// src/routes/settingsRoutes.js (ESM Final Version)
+import express from 'express';
+import Settings from '../models/settingsModel.js';
+
 const router = express.Router();
-const Settings = require('../models/settingsModel');
 
 // GET: Contact settings ko database se nikalo
 router.get('/', async (req, res) => {
@@ -17,17 +19,17 @@ router.get('/', async (req, res) => {
 router.put('/', async (req, res) => {
     try {
         const { email, whatsapp, address } = req.body;
+
         const updatedSettings = await Settings.findOneAndUpdate(
             { key: 'contactInfo' },
             { email, whatsapp, address },
-            // new: true, taaki update kiya hua data wapas mile
-            // upsert: true, taaki agar data na ho to naya bana de
-            { new: true, upsert: true }
+            { new: true, upsert: true } // naya document bana de agar nahi milta
         );
+
         res.json(updatedSettings);
     } catch (error) {
         res.status(400).json({ message: 'Error updating settings' });
     }
 });
 
-module.exports = router;
+export default router;
