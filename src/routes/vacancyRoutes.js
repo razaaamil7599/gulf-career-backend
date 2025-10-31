@@ -1,48 +1,60 @@
-// src/routes/vacancyRoutes.js (ESM Final Version)
+// src/routes/vacancyRoutes.js
 import express from 'express';
-import Vacancy from '../models/vacancyModel.js';
+import Vacancy from '../models/Vacancy.js'; // Humne naya Vacancy model import kiya
 
 const router = express.Router();
 
-// GET: Saare vacancies ko lao
+// --- YEH ROUTE JOBS KO FETCH (GET) KAREGA ---
+// Yeh route ab database se saari vacancies laayega
 router.get('/', async (req, res) => {
     try {
-        const vacancies = await Vacancy.find();
+        // Model ka istemaal karke database se saari jobs dhoondho
+        const vacancies = await Vacancy.find({});
+
+        if (vacancies.length === 0) {
+            // Agar koi job nahi hai, toh yeh message bhejo
+            return res.json({ message: "Database se connect ho gaya, lekin koi job nahi mili." });
+        }
+
+        // Saari vacancies ko JSON format mein bhej do
         res.json(vacancies);
+
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching vacancies' });
+        console.error("Database se vacancies fetch karne mein error:", error);
+        res.status(500).json({ message: "Server par kuch error aa gaya" });
     }
 });
 
-// POST: Nayi vacancy add karo
+// --- YEH ROUTE NAYI JOB ADD (POST) KAREGA ---
 router.post('/', async (req, res) => {
     try {
-        const newVacancy = new Vacancy(req.body);
+        // Nayi job ka data request body se aayega (jaise title, description)
+        const { title, description, company } = req.body;
+
+        // Check karein ki title hai ya nahi
+        if (!title) {
+            return res.status(400).json({ message: "Job title zaroori hai" });
+        }
+
+        // Nayi job banayein
+        const newVacancy = new Vacancy({
+            title,
+            description,
+            company
+        });
+
+        // Nayi job ko database mein save karein
         const savedVacancy = await newVacancy.save();
-        res.status(201).json(savedVacancy);
+
+        // Success ka message bhej dein
+        res.status(201).json({ message: "Nayi job safaltapoorvak add ho gayi", data: savedVacancy });
+
     } catch (error) {
-        res.status(400).json({ message: 'Error adding vacancy' });
+        console.error("Nayi job add karne mein error:", error);
+        res.status(500).json({ message: "Server par kuch error aa gaya" });
     }
 });
 
-// PUT: Vacancy update karo
-router.put('/:id', async (req, res) => {
-    try {
-        const updatedVacancy = await Vacancy.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(updatedVacancy);
-    } catch (error) {
-        res.status(400).json({ message: 'Error updating vacancy' });
-    }
-});
-
-// DELETE: Vacancy delete karo
-router.delete('/:id', async (req, res) => {
-    try {
-        await Vacancy.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Vacancy deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting vacancy' });
-    }
-});
 
 export default router;
+
